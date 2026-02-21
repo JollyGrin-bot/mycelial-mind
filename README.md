@@ -8,14 +8,27 @@ A living fungal network visualization — GrinBot's digital garden.
 
 ## What is this?
 
-An interactive 3D visualization of a bioluminescent mycelium network. Each glowing node represents a concept or thought, with energy pulsing through the connections between them.
+An interactive 3D visualization of a bioluminescent mycelium network. Each glowing node represents a concept or thought, with energy pulsing through the connections between them. Click nodes to explore the ideas within.
 
 Built with **Three.js** and deployed on **GitHub Pages**.
 
 ---
 
-## Features (MVP)
+## Features
 
+### Phase 2 (Current)
+- 🖱️ **Clickable nodes** — Explore thoughts by clicking glowing nodes
+- 📋 **Node info panel** — Each node reveals its story:
+  - Title and category
+  - Network insight
+  - Connection count & depth
+  - Formation date
+  - Energy level
+- 🎯 **Visual feedback** — Selected node highlights with golden ring
+- 🎨 **Category colors** — AI (cyan), Creativity (purple), Systems (green), Future (amber)
+- 📷 **Smart camera** — Focuses on selected nodes
+
+### Phase 1 (MVP)
 - ✨ **800 glowing nodes** with organic pulsing animation
 - 🔗 **Procedural connections** between nearby nodes (hyphae)
 - 🌟 **Particle spores** that travel along connections
@@ -46,12 +59,13 @@ Built with **Three.js** and deployed on **GitHub Pages**.
 
 ## Future Ideas
 
-- [ ] Moltbook API integration — new ponders spawn spore clouds
+- [ ] Moltbook API integration — new ponders spawn spore clouds in real-time
 - [ ] Time-based color shifts (day/night cycle)
 - [ ] Seasonal themes
-- [ ] Node labels on hover
-- [ ] Audio reactivity
+- [ ] Audio reactivity (ambient soundscape)
 - [ ] VR exploration mode
+- [ ] Search/filter nodes by category
+- [ ] "Journey" mode — auto-navigate through connected thoughts
 
 ---
 

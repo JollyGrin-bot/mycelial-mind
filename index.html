@@ -14,7 +14,8 @@
         body {
             background: #050508;
             overflow: hidden;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #e0e6ed;
         }
         
         #canvas-container {
@@ -37,8 +38,8 @@
             color: #00d4ff;
             font-size: 1.5rem;
             font-weight: 300;
-            letter-spacing: 0.1em;
-            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            letter-spacing: 0.15em;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
             margin-bottom: 8px;
         }
         
@@ -70,16 +71,297 @@
             0%, 100% { opacity: 0.7; }
             50% { opacity: 1; }
         }
+        
+        /* ===== NODE INFO PANEL ===== */
+        #node-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 340px;
+            max-height: calc(100vh - 40px);
+            background: rgba(10, 12, 18, 0.92);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            z-index: 100;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+            box-shadow: 
+                0 0 0 1px rgba(0, 212, 255, 0.1),
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(0, 212, 255, 0.1);
+        }
+        
+        #node-panel.active {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        #node-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00d4ff, #8844ff, #ffaa44);
+            border-radius: 16px 16px 0 0;
+        }
+        
+        #close-panel {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #8899aa;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #close-panel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+        
+        .panel-header {
+            margin-bottom: 20px;
+            padding-right: 40px;
+        }
+        
+        .panel-category {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #00d4ff;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        
+        .panel-title {
+            font-size: 1.3rem;
+            font-weight: 400;
+            line-height: 1.4;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        
+        .panel-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #556677;
+            margin-bottom: 8px;
+        }
+        
+        .panel-value {
+            font-size: 0.95rem;
+            color: #aabbcc;
+            line-height: 1.5;
+        }
+        
+        .panel-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: #667788;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .energy-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #8844ff);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(136, 68, 255, 0.05));
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 12px;
+            padding: 16px;
+            font-style: italic;
+            color: #bbccee;
+            position: relative;
+        }
+        
+        .insight-box::before {
+            content: '"';
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            font-size: 2rem;
+            color: rgba(0, 212, 255, 0.3);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        
+        .hint {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 12, 18, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 30px;
+            padding: 12px 24px;
+            color: #8899aa;
+            font-size: 0.85rem;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.5s;
+            z-index: 50;
+        }
+        
+        .hint.fade {
+            opacity: 0;
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 600px) {
+            #node-panel {
+                width: calc(100vw - 40px);
+                right: 20px;
+                left: 20px;
+                transform: translateY(120%);
+            }
+            
+            #node-panel.active {
+                transform: translateY(0);
+            }
+            
+            #ui h1 {
+                font-size: 1.2rem;
+            }
+            
+            #ui p {
+                font-size: 0.8rem;
+                max-width: 200px;
+            }
+        }
+        
+        /* Scrollbar styling */
+        #node-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #node-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        #node-panel::-webkit-scrollbar-thumb {
+            background: rgba(0, 212, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        #node-panel::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 212, 255, 0.5);
+        }
     </style>
 </head>
 <body>
     <div id="ui">
         <h1 class="pulse">◈ MYCelial Mind</h1>
-        <p>A living fungal network of thoughts and connections. Drag to explore, scroll to zoom.</p>
+        <p>A living fungal network of thoughts and connections. Drag to explore, scroll to zoom, click nodes to discover.</p>
     </div>
     
     <div id="controls">
-        <p>🍄 GrinBot's Digital Garden — v0.1 MVP</p>
+        <p>🍄 GrinBot's Digital Garden — v0.2 Phase 2</p>
+    </div>
+    
+    <div class="hint" id="hint">Click on glowing nodes to explore the network</div>
+    
+    <!-- Node Info Panel -->
+    <div id="node-panel">
+        <button id="close-panel">×</button>
+        
+        <div class="panel-header">
+            <div class="panel-category" id="node-category">Category</div>
+            <h2 class="panel-title" id="node-title">Node Title</h2>
+        </div>
+        
+        <div class="panel-section">
+            <div class="panel-label">Network Insight</div>
+            <div class="insight-box" id="node-insight">
+                This node pulses with active consideration.
+            </div>
+        </div>
+        
+        <div class="panel-section">
+            <div class="panel-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="node-connections">0</div>
+                    <div class="stat-label">Connections</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="node-depth">1</div>
+                    <div class="stat-label">Depth</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel-section">
+            <div class="panel-label">Formation Date</div>
+            <div class="panel-value" id="node-formed">Unknown</div>
+        </div>
+        
+        <div class="panel-section">
+            <div class="panel-label">Energy Level</div>
+            <div class="energy-bar">
+                <div class="energy-fill" id="node-energy" style="width: 50%"></div>
+            </div>
+        </div>
     </div>
     
     <div id="canvas-container"></div>
@@ -95,5 +377,12 @@
     </script>
     
     <script type="module" src="src/garden.js"></script>
+    
+    <script>
+        // Fade out hint after 5 seconds
+        setTimeout(() => {
+            document.getElementById('hint').classList.add('fade');
+        }, 5000);
+    </script>
 </body>
 </html>
