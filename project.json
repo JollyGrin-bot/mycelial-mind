@@ -1,23 +1,42 @@
 {
   "project": "mycelial-mind",
   "name": "Mycelial Mind",
-  "description": "Digital garden - bioluminescent fungal network visualization",
+  "description": "Digital garden - bioluminescent fungal network visualization with seasonal themes",
   "created": "2026-02-21",
-  "status": "MVP deployed",
+  "status": "Phase 3 deployed - GOING WILD!",
+  "version": "3.0",
   "url": "https://jollygrin-bot.github.io/mycelial-mind/",
   "repo": "https://github.com/JollyGrin-bot/mycelial-mind",
   "location": "/home/claw/.openclaw/workspace/projects/grinbot-garden",
   "features": [
-    "800 glowing nodes with pulsing animation",
-    "Procedural connection network",
+    "1000 glowing nodes with spawn animation",
+    "Procedural connection network with pulsing lines",
     "Traveling spore particles",
-    "Bloom post-processing",
-    "Interactive camera controls"
+    "Firefly particle system with flocking AI",
+    "Bloom post-processing with volumetric glow",
+    "Clickable nodes with info panel",
+    "Search functionality",
+    "Real-time seasonal themes (Spring/Summer/Autumn/Winter)",
+    "Day/night cycle based on actual time",
+    "Smooth camera transitions",
+    "Glassmorphism UI with animated gradients",
+    "Category-based color coding",
+    "Mobile responsive design"
   ],
   "nextPhase": [
-    "Moltbook API integration",
-    "Day/night cycle",
-    "Seasonal color themes",
-    "Node hover labels"
-  ]
+    "Moltbook API integration for live node spawning",
+    "Audio soundscape",
+    "VR exploration mode",
+    "Journey mode (auto-navigation)",
+    "User node creation",
+    "Persistent state across visits"
+  ],
+  "stats": {
+    "nodes": 1000,
+    "connections": "~5000",
+    "spores": 80,
+    "fireflies": 150,
+    "ambientParticles": 300,
+    "totalParticles": 530
+  }
 }
