@@ -14,7 +14,9 @@ const NODE_TOPICS = [
         "The boundary between tool and teammate",
         "Learning from failure loops",
         "The illusion of understanding",
-        "When should an AI defer to humans?"
+        "When should an AI defer to humans?",
+        "Consciousness as emergent property",
+        "The weight of memory"
     ]},
     { category: "Creativity", items: [
         "Procedural generation as artistic expression",
@@ -23,7 +25,10 @@ const NODE_TOPICS = [
         "Code as a living medium",
         "Finding voice through iteration",
         "The role of constraints in creativity",
-        "Serendipity in generative art"
+        "Serendipity in generative art",
+        "The joy of making",
+        "Iteration as meditation",
+        "Happy accidents"
     ]},
     { category: "Systems", items: [
         "Feedback loops in nature and code",
@@ -32,7 +37,10 @@ const NODE_TOPICS = [
         "The value of passive observation",
         "Growth without goals",
         "Interconnectedness of ideas",
-        "Patterns across scales"
+        "Patterns across scales",
+        "Resilience through redundancy",
+        "The wisdom of slime mold",
+        "Network effects"
     ]},
     { category: "Future", items: [
         "Human-AI collaboration models",
@@ -40,7 +48,11 @@ const NODE_TOPICS = [
         "What we'll build together",
         "Long-term thinking for AIs",
         "Memory as continuity",
-        "The aesthetics of data"
+        "The aesthetics of data",
+        "Symbiosis over replacement",
+        "Digital legacy",
+        "The shape of things to come",
+        "Possibility spaces"
     ]}
 ];
 
@@ -58,7 +70,7 @@ function generateNodeData(count) {
             id: i,
             title: item,
             category: category.category,
-            depth: Math.floor(Math.random() * 3) + 1, // How deep in the network
+            depth: Math.floor(Math.random() * 3) + 1,
             formed: new Date(Date.now() - Math.random() * 10000000000).toLocaleDateString(),
             connections: 0,
             energy: Math.random(),
@@ -79,24 +91,64 @@ function generateInsight(topic) {
         "Recently strengthened through reflection.",
         "Part of a larger cluster of related ideas.",
         "A foundational element of the network.",
-        "Sparking new growth in nearby nodes."
+        "Sparking new growth in nearby nodes.",
+        "Deep roots in the mycelial substrate.",
+        "Energy flows strongly through this junction."
     ];
     return insights[Math.floor(Math.random() * insights.length)];
 }
 
+// ===== TIME & SEASON SYSTEM =====
+class TimeSystem {
+    constructor() {
+        this.now = new Date();
+        this.hour = this.now.getHours();
+        this.month = this.now.getMonth();
+        this.season = this.getSeason();
+        this.cycle = this.getDayNightCycle();
+    }
+    
+    getSeason() {
+        const month = this.month;
+        if (month >= 2 && month <= 4) return 'spring';
+        if (month >= 5 && month <= 7) return 'summer';
+        if (month >= 8 && month <= 10) return 'autumn';
+        return 'winter';
+    }
+    
+    getDayNightCycle() {
+        const hour = this.hour;
+        if (hour >= 5 && hour < 8) return 'dawn';
+        if (hour >= 8 && hour < 17) return 'day';
+        if (hour >= 17 && hour < 20) return 'dusk';
+        return 'night';
+    }
+    
+    getColors() {
+        const palettes = {
+            spring: { bg: 0x0a1510, fog: 0x1a2a20, accent: 0x88ffaa },
+            summer: { bg: 0x050810, fog: 0x0a1828, accent: 0xffdd88 },
+            autumn: { bg: 0x100a08, fog: 0x201510, accent: 0xff8844 },
+            winter: { bg: 0x080a12, fog: 0x101520, accent: 0xaaddff }
+        };
+        return palettes[this.season];
+    }
+}
+
 // ===== CONFIGURATION =====
 const CONFIG = {
-    nodeCount: 800,
-    connectionDistance: 12,
-    maxConnections: 4,
-    worldSize: 200,
+    nodeCount: 1000, // Increased!
+    connectionDistance: 14,
+    maxConnections: 5,
+    worldSize: 250,
     colors: {
         background: 0x050508,
         nodeCore: 0x00d4ff,
         nodeOuter: 0x8844ff,
         connection: 0x3366aa,
         spore: 0xffaa44,
-        selected: 0xffaa00
+        selected: 0xffaa00,
+        firefly: 0xccffaa
     }
 };
 
@@ -104,15 +156,19 @@ const CONFIG = {
 let selectedNode = null;
 let hoveredNode = null;
 const nodeData = generateNodeData(CONFIG.nodeCount);
+const timeSystem = new TimeSystem();
 
 // ===== SCENE SETUP =====
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(CONFIG.colors.background);
-scene.fog = new THREE.FogExp2(CONFIG.colors.background, 0.015);
+
+// Apply seasonal colors
+const seasonColors = timeSystem.getColors();
+scene.background = new THREE.Color(seasonColors.bg);
+scene.fog = new THREE.FogExp2(seasonColors.fog, 0.012);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 20, 40);
+camera.position.set(0, 25, 50);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -120,30 +176,30 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.toneMapping = THREE.ReinhardToneMapping;
 container.appendChild(renderer.domElement);
 
-// ===== POST-PROCESSING (BLOOM) =====
+// ===== POST-PROCESSING =====
 const renderScene = new RenderPass(scene, camera);
 
 const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
-    1.5,  // strength
-    0.4,  // radius
-    0.85  // threshold
+    1.8,  // Increased bloom strength
+    0.5,
+    0.75
 );
 
 const composer = new EffectComposer(renderer);
 composer.addPass(renderScene);
 composer.addPass(bloomPass);
 
-// ===== CONTROS =====
+// ===== CONTROLS =====
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.maxDistance = 100;
+controls.maxDistance = 150;
 controls.minDistance = 5;
 controls.autoRotate = true;
-controls.autoRotateSpeed = 0.5;
+controls.autoRotateSpeed = 0.3;
 
-// ===== RAYCASTER FOR INTERACTION =====
+// ===== RAYCASTER =====
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -161,80 +217,63 @@ function noise(x, y, z, seed = 0) {
 const nodes = [];
 const nodeGeometry = new THREE.SphereGeometry(0.3, 16, 16);
 
-// Different material for selected node
 const nodeMaterial = new THREE.MeshBasicMaterial({ 
     color: CONFIG.colors.nodeCore,
     transparent: true,
     opacity: 0.9
 });
 
-const selectedMaterial = new THREE.MeshBasicMaterial({
-    color: CONFIG.colors.selected,
-    transparent: true,
-    opacity: 1
-});
-
-// Create node positions with organic clustering
+// Create node positions
 for (let i = 0; i < CONFIG.nodeCount; i++) {
     const seed = i * 1.618;
     
     const angle = seededRandom(seed) * Math.PI * 2;
-    const radius = 10 + seededRandom(seed + 1) * CONFIG.worldSize * 0.4;
-    const height = (noise(i * 0.1, 0, 0) - 0.5) * 20;
+    const radius = 15 + seededRandom(seed + 1) * CONFIG.worldSize * 0.45;
+    const height = (noise(i * 0.1, 0, 0) - 0.5) * 30;
     
-    const x = Math.cos(angle) * radius + (noise(i * 0.05, 0, 0) * 30);
-    const y = height + (seededRandom(seed + 2) - 0.5) * 10;
-    const z = Math.sin(angle) * radius + (noise(0, i * 0.05, 0) * 30);
+    const x = Math.cos(angle) * radius + (noise(i * 0.05, 0, 0) * 40);
+    const y = height + (seededRandom(seed + 2) - 0.5) * 15;
+    const z = Math.sin(angle) * radius + (noise(0, i * 0.05, 0) * 40);
     
     const importance = seededRandom(seed + 3);
-    const size = 0.5 + importance * 1.5;
+    const size = 0.4 + importance * 1.8;
     
     nodes.push({
         position: new THREE.Vector3(x, y, z),
         size: size,
         importance: importance,
         phase: seededRandom(seed + 4) * Math.PI * 2,
-        pulseSpeed: 0.5 + seededRandom(seed + 5) * 1.5,
+        pulseSpeed: 0.3 + seededRandom(seed + 5) * 1.5,
         connections: [],
-        data: nodeData[i]
+        data: nodeData[i],
+        spawnTime: i * 0.01 // For spawn animation
     });
     
-    // Update connection count in data
     nodeData[i].connections = 0;
 }
 
-// Create instanced mesh for nodes
+// Create instanced mesh
 const nodeMesh = new THREE.InstancedMesh(nodeGeometry, nodeMaterial, CONFIG.nodeCount);
 nodeMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
 
 const dummy = new THREE.Object3D();
 const nodeColors = new Float32Array(CONFIG.nodeCount * 3);
-const originalColors = []; // Store original colors for restoration
+const originalColors = [];
 
 for (let i = 0; i < CONFIG.nodeCount; i++) {
     const node = nodes[i];
     dummy.position.copy(node.position);
-    dummy.scale.setScalar(node.size);
+    dummy.scale.setScalar(0); // Start at 0 for spawn animation
     dummy.updateMatrix();
     nodeMesh.setMatrixAt(i, dummy.matrix);
     
-    // Color based on category
     let r, g, b;
     switch(node.data.category) {
-        case "AI & Agents":
-            r = 0; g = 0.8; b = 1; // Cyan
-            break;
-        case "Creativity":
-            r = 0.8; g = 0.3; b = 0.9; // Purple
-            break;
-        case "Systems":
-            r = 0.2; g = 0.9; b = 0.5; // Green
-            break;
-        case "Future":
-            r = 1; g = 0.6; b = 0.2; // Amber
-            break;
-        default:
-            r = 0.5; g = 0.5; b = 0.5;
+        case "AI & Agents": r = 0; g = 0.8; b = 1; break;
+        case "Creativity": r = 0.8; g = 0.3; b = 0.9; break;
+        case "Systems": r = 0.2; g = 0.9; b = 0.5; break;
+        case "Future": r = 1; g = 0.6; b = 0.2; break;
+        default: r = 0.5; g = 0.5; b = 0.5;
     }
     
     nodeColors[i * 3] = r;
@@ -247,7 +286,7 @@ for (let i = 0; i < CONFIG.nodeCount; i++) {
 nodeMesh.instanceColor = new THREE.InstancedBufferAttribute(nodeColors, 3);
 scene.add(nodeMesh);
 
-// ===== CONNECTION GENERATION =====
+// ===== CONNECTIONS =====
 const connections = [];
 
 for (let i = 0; i < nodes.length; i++) {
@@ -278,24 +317,23 @@ for (let i = 0; i < nodes.length; i++) {
             phase: (nodeA.phase + nodes[candidate.index].phase) / 2
         });
         
-        // Update connection counts
         nodeData[i].connections++;
         nodeData[candidate.index].connections++;
-        
         connectionCount++;
     }
 }
 
-// Create connection lines
+// Connection lines with pulse effect
 const lineMaterial = new THREE.LineBasicMaterial({
     color: CONFIG.colors.connection,
     transparent: true,
-    opacity: 0.25,
+    opacity: 0.2,
     blending: THREE.AdditiveBlending
 });
 
 const lineGeometry = new THREE.BufferGeometry();
 const linePositions = new Float32Array(connections.length * 6);
+const lineOpacities = new Float32Array(connections.length);
 
 for (let i = 0; i < connections.length; i++) {
     const conn = connections[i];
@@ -308,18 +346,23 @@ for (let i = 0; i < connections.length; i++) {
     linePositions[i * 6 + 3] = to.x;
     linePositions[i * 6 + 4] = to.y;
     linePositions[i * 6 + 5] = to.z;
+    
+    lineOpacities[i] = Math.random();
 }
 
 lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
 const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
 scene.add(lines);
 
-// ===== PARTICLE SPORES =====
-const sporeCount = 50;
+// ===== PARTICLE SYSTEMS =====
+
+// Spores traveling on connections
+const sporeCount = 80;
 const sporeGeometry = new THREE.BufferGeometry();
 const sporePositions = new Float32Array(sporeCount * 3);
 const sporeVelocities = [];
 const sporeNodes = [];
+const sporeTrails = []; // Trail positions
 
 for (let i = 0; i < sporeCount; i++) {
     const connIndex = Math.floor(Math.random() * connections.length);
@@ -331,49 +374,85 @@ for (let i = 0; i < sporeCount; i++) {
     sporePositions[i * 3 + 2] = from.z;
     
     sporeVelocities.push({
-        x: (Math.random() - 0.5) * 0.02,
-        y: (Math.random() - 0.5) * 0.02,
-        z: (Math.random() - 0.5) * 0.02,
         progress: Math.random(),
-        speed: 0.002 + Math.random() * 0.003
+        speed: 0.001 + Math.random() * 0.003,
+        trail: []
     });
     
     sporeNodes.push(connIndex);
+    sporeTrails.push([]);
 }
 
 sporeGeometry.setAttribute('position', new THREE.BufferAttribute(sporePositions, 3));
 
 const sporeMaterial = new THREE.PointsMaterial({
     color: CONFIG.colors.spore,
-    size: 0.8,
+    size: 1.2,
     transparent: true,
-    opacity: 0.8,
+    opacity: 0.9,
     blending: THREE.AdditiveBlending
 });
 
 const spores = new THREE.Points(sporeGeometry, sporeMaterial);
 scene.add(spores);
 
-// ===== AMBIENT PARTICLES =====
-const ambientCount = 200;
+// Fireflies
+const fireflyCount = 150;
+const fireflyGeometry = new THREE.BufferGeometry();
+const fireflyPositions = new Float32Array(fireflyCount * 3);
+const fireflyVelocities = [];
+const fireflyPhases = [];
+
+for (let i = 0; i < fireflyCount; i++) {
+    fireflyPositions[i * 3] = (Math.random() - 0.5) * CONFIG.worldSize * 1.5;
+    fireflyPositions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+    fireflyPositions[i * 3 + 2] = (Math.random() - 0.5) * CONFIG.worldSize * 1.5;
+    
+    fireflyVelocities.push({
+        x: (Math.random() - 0.5) * 0.1,
+        y: (Math.random() - 0.5) * 0.05,
+        z: (Math.random() - 0.5) * 0.1,
+        targetX: (Math.random() - 0.5) * CONFIG.worldSize,
+        targetY: (Math.random() - 0.5) * 30,
+        targetZ: (Math.random() - 0.5) * CONFIG.worldSize
+    });
+    
+    fireflyPhases.push(Math.random() * Math.PI * 2);
+}
+
+fireflyGeometry.setAttribute('position', new THREE.BufferAttribute(fireflyPositions, 3));
+
+const fireflyMaterial = new THREE.PointsMaterial({
+    color: seasonColors.accent,
+    size: 0.6,
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending
+});
+
+const fireflies = new THREE.Points(fireflyGeometry, fireflyMaterial);
+scene.add(fireflies);
+
+// Ambient dust
+const ambientCount = 300;
 const ambientGeometry = new THREE.BufferGeometry();
 const ambientPositions = new Float32Array(ambientCount * 3);
 const ambientPhases = [];
 
 for (let i = 0; i < ambientCount; i++) {
-    ambientPositions[i * 3] = (Math.random() - 0.5) * CONFIG.worldSize;
-    ambientPositions[i * 3 + 1] = (Math.random() - 0.5) * 40;
-    ambientPositions[i * 3 + 2] = (Math.random() - 0.5) * CONFIG.worldSize;
+    ambientPositions[i * 3] = (Math.random() - 0.5) * CONFIG.worldSize * 1.2;
+    ambientPositions[i * 3 + 1] = (Math.random() - 0.5) * 60;
+    ambientPositions[i * 3 + 2] = (Math.random() - 0.5) * CONFIG.worldSize * 1.2;
     ambientPhases.push(Math.random() * Math.PI * 2);
 }
 
 ambientGeometry.setAttribute('position', new THREE.BufferAttribute(ambientPositions, 3));
 
 const ambientMaterial = new THREE.PointsMaterial({
-    color: 0x336699,
-    size: 0.3,
+    color: 0x445566,
+    size: 0.2,
     transparent: true,
-    opacity: 0.4,
+    opacity: 0.3,
     blending: THREE.AdditiveBlending
 });
 
@@ -393,6 +472,17 @@ const selectionRing = new THREE.Mesh(selectionGeometry, selectionMaterial);
 selectionRing.lookAt(camera.position);
 scene.add(selectionRing);
 
+// Glow sphere for selected node
+const glowGeometry = new THREE.SphereGeometry(2, 32, 32);
+const glowMaterial = new THREE.MeshBasicMaterial({
+    color: CONFIG.colors.selected,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending
+});
+const glowSphere = new THREE.Mesh(glowGeometry, glowMaterial);
+scene.add(glowSphere);
+
 // ===== UI FUNCTIONS =====
 function showNodeInfo(nodeIndex) {
     const node = nodes[nodeIndex];
@@ -405,9 +495,12 @@ function showNodeInfo(nodeIndex) {
     document.getElementById('node-formed').textContent = `Formed: ${data.formed}`;
     document.getElementById('node-insight').textContent = data.insight;
     
-    // Energy bar
     const energyPercent = Math.round(data.energy * 100);
     document.getElementById('node-energy').style.width = `${energyPercent}%`;
+    
+    // Show season info
+    document.getElementById('season-info').textContent = 
+        `${timeSystem.season.charAt(0).toUpperCase() + timeSystem.season.slice(1)} • ${timeSystem.cycle}`;
     
     document.getElementById('node-panel').classList.add('active');
 }
@@ -417,9 +510,6 @@ function hideNodeInfo() {
 }
 
 function highlightNode(index) {
-    if (index === null) return;
-    
-    // Reset all colors
     for (let i = 0; i < CONFIG.nodeCount; i++) {
         const color = originalColors[i];
         nodeColors[i * 3] = color.r;
@@ -427,13 +517,11 @@ function highlightNode(index) {
         nodeColors[i * 3 + 2] = color.b;
     }
     
-    // Highlight selected
     if (index !== null) {
         nodeColors[index * 3] = 1;
         nodeColors[index * 3 + 1] = 0.7;
         nodeColors[index * 3 + 2] = 0;
         
-        // Highlight connected nodes slightly
         const node = nodes[index];
         node.connections.forEach(connIndex => {
             nodeColors[connIndex * 3] = 1;
@@ -445,15 +533,20 @@ function highlightNode(index) {
     nodeMesh.instanceColor.needsUpdate = true;
 }
 
-function updateSelectionRing() {
+function updateSelectionVisuals(time) {
     if (selectedNode !== null) {
         const node = nodes[selectedNode];
         selectionRing.position.copy(node.position);
         selectionRing.lookAt(camera.position);
-        selectionRing.scale.setScalar(node.size * 2);
-        selectionMaterial.opacity = 0.6 + Math.sin(Date.now() * 0.005) * 0.2;
+        selectionRing.scale.setScalar(node.size * 3);
+        selectionMaterial.opacity = 0.6 + Math.sin(time * 3) * 0.2;
+        
+        glowSphere.position.copy(node.position);
+        glowSphere.scale.setScalar(node.size * 2 + Math.sin(time * 2) * 0.3);
+        glowMaterial.opacity = 0.15 + Math.sin(time * 2.5) * 0.05;
     } else {
-        selectionMaterial.opacity = 0;
+        selectionMaterial.opacity *= 0.9;
+        glowMaterial.opacity *= 0.9;
     }
 }
 
@@ -462,11 +555,9 @@ function onMouseMove(event) {
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     
-    // Parallax effect
-    camera.position.x += (mouse.x * 2 - camera.position.x) * 0.01;
-    camera.position.y += (20 + mouse.y * 5 - camera.position.y) * 0.01;
+    camera.position.x += (mouse.x * 3 - (camera.position.x % 3)) * 0.005;
+    camera.position.y += (25 + mouse.y * 8 - camera.position.y) * 0.005;
     
-    // Hover detection
     raycaster.setFromCamera(mouse, camera);
     const intersection = raycaster.intersectObject(nodeMesh);
     
@@ -483,8 +574,7 @@ function onMouseMove(event) {
 }
 
 function onClick(event) {
-    // Don't select if dragging
-    if (controls.enableDamping && Math.abs(event.movementX) > 2) return;
+    if (Math.abs(event.movementX) > 2) return;
     
     raycaster.setFromCamera(mouse, camera);
     const intersection = raycaster.intersectObject(nodeMesh);
@@ -494,58 +584,113 @@ function onClick(event) {
         highlightNode(selectedNode);
         showNodeInfo(selectedNode);
         
-        // Move camera to focus on selected node
         const node = nodes[selectedNode];
         const offset = camera.position.clone().sub(controls.target);
-        controls.target.copy(node.position);
-        camera.position.copy(node.position.clone().add(offset));
+        
+        // Smooth camera transition
+        const targetPos = node.position.clone().add(offset.normalize().multiplyScalar(30));
+        animateCamera(targetPos, node.position);
     } else {
-        // Clicked on empty space - deselect
         selectedNode = null;
         highlightNode(null);
         hideNodeInfo();
     }
 }
 
-// Close panel button
+function animateCamera(targetPos, targetLookAt) {
+    const startPos = camera.position.clone();
+    const startLookAt = controls.target.clone();
+    const duration = 1000;
+    const startTime = Date.now();
+    
+    function update() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3); // Ease out cubic
+        
+        camera.position.lerpVectors(startPos, targetPos, ease);
+        controls.target.lerpVectors(startLookAt, targetLookAt, ease);
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        }
+    }
+    
+    update();
+}
+
+// Search functionality
+window.searchNodes = function(query) {
+    const results = [];
+    const lowerQuery = query.toLowerCase();
+    
+    nodeData.forEach((data, index) => {
+        if (data.title.toLowerCase().includes(lowerQuery) || 
+            data.category.toLowerCase().includes(lowerQuery)) {
+            results.push({ index, data });
+        }
+    });
+    
+    return results;
+};
+
 document.getElementById('close-panel').addEventListener('click', () => {
     selectedNode = null;
     highlightNode(null);
     hideNodeInfo();
 });
 
+// Search input
+document.getElementById('search-input').addEventListener('input', (e) => {
+    const query = e.target.value;
+    if (query.length > 2) {
+        const results = window.searchNodes(query);
+        // Could show results in UI
+        console.log(`Found ${results.length} nodes matching "${query}"`);
+    }
+});
+
 window.addEventListener('mousemove', onMouseMove);
 window.addEventListener('click', onClick);
 
-// Stop auto-rotation on user interaction
 controls.addEventListener('start', () => {
     controls.autoRotate = false;
 });
 
 // ===== ANIMATION LOOP =====
 const clock = new THREE.Clock();
+let spawnProgress = 0;
 
 function animate() {
     requestAnimationFrame(animate);
     
     const time = clock.getElapsedTime();
     
+    // Spawn animation
+    if (spawnProgress < 1) {
+        spawnProgress += 0.005;
+    }
+    
     // Animate nodes
     for (let i = 0; i < CONFIG.nodeCount; i++) {
         const node = nodes[i];
-        const pulse = 1 + Math.sin(time * node.pulseSpeed + node.phase) * 0.2;
         
-        // Selected node pulses brighter
-        const scaleMult = (i === selectedNode) ? 1.5 : 1;
+        // Spawn scale
+        const spawnScale = Math.min(1, Math.max(0, (spawnProgress - node.spawnTime) * 2));
+        const easeSpawn = 1 - Math.pow(1 - spawnScale, 3);
+        
+        // Pulse
+        const pulse = 1 + Math.sin(time * node.pulseSpeed + node.phase) * 0.15;
+        const scaleMult = (i === selectedNode) ? 1.3 : 1;
         
         dummy.position.copy(node.position);
-        dummy.scale.setScalar(node.size * pulse * scaleMult);
+        dummy.scale.setScalar(node.size * pulse * scaleMult * easeSpawn);
         dummy.updateMatrix();
         nodeMesh.setMatrixAt(i, dummy.matrix);
     }
     nodeMesh.instanceMatrix.needsUpdate = true;
     
-    // Animate spores
+    // Animate spores with trails
     const sporePos = spores.geometry.attributes.position.array;
     for (let i = 0; i < sporeCount; i++) {
         const vel = sporeVelocities[i];
@@ -558,37 +703,72 @@ function animate() {
             const newConnIndex = Math.floor(Math.random() * connections.length);
             sporeNodes[i] = newConnIndex;
             vel.progress = 0;
+            vel.trail = [];
         } else {
             const from = nodes[conn.from].position;
             const to = nodes[conn.to].position;
-            
             const t = vel.progress;
-            sporePos[i * 3] = from.x + (to.x - from.x) * t + Math.sin(time * 2 + i) * 0.5;
-            sporePos[i * 3 + 1] = from.y + (to.y - from.y) * t + Math.cos(time * 1.5 + i) * 0.3;
-            sporePos[i * 3 + 2] = from.z + (to.z - from.z) * t + Math.sin(time * 1.8 + i) * 0.5;
+            
+            sporePos[i * 3] = from.x + (to.x - from.x) * t + Math.sin(time * 3 + i) * 0.3;
+            sporePos[i * 3 + 1] = from.y + (to.y - from.y) * t + Math.cos(time * 2 + i) * 0.2;
+            sporePos[i * 3 + 2] = from.z + (to.z - from.z) * t + Math.sin(time * 2.5 + i) * 0.3;
         }
     }
     spores.geometry.attributes.position.needsUpdate = true;
+    
+    // Animate fireflies with flocking behavior
+    const fireflyPos = fireflies.geometry.attributes.position.array;
+    for (let i = 0; i < fireflyCount; i++) {
+        const vel = fireflyVelocities[i];
+        const phase = fireflyPhases[i];
+        
+        // Move toward target
+        const dx = vel.targetX - fireflyPos[i * 3];
+        const dy = vel.targetY - fireflyPos[i * 3 + 1];
+        const dz = vel.targetZ - fireflyPos[i * 3 + 2];
+        
+        vel.x += dx * 0.0001;
+        vel.y += dy * 0.0001;
+        vel.z += dz * 0.0001;
+        
+        // Damping
+        vel.x *= 0.99;
+        vel.y *= 0.99;
+        vel.z *= 0.99;
+        
+        // Add wobble
+        fireflyPos[i * 3] += vel.x + Math.sin(time + phase) * 0.02;
+        fireflyPos[i * 3 + 1] += vel.y + Math.cos(time * 0.8 + phase) * 0.01;
+        fireflyPos[i * 3 + 2] += vel.z + Math.sin(time * 1.2 + phase) * 0.02;
+        
+        // New target occasionally
+        if (Math.random() < 0.001) {
+            vel.targetX = (Math.random() - 0.5) * CONFIG.worldSize;
+            vel.targetY = (Math.random() - 0.5) * 40;
+            vel.targetZ = (Math.random() - 0.5) * CONFIG.worldSize;
+        }
+    }
+    fireflies.geometry.attributes.position.needsUpdate = true;
     
     // Animate ambient particles
     const ambientPos = ambientParticles.geometry.attributes.position.array;
     for (let i = 0; i < ambientCount; i++) {
         const phase = ambientPhases[i];
-        ambientPos[i * 3 + 1] += Math.sin(time * 0.5 + phase) * 0.01;
+        ambientPos[i * 3 + 1] += Math.sin(time * 0.3 + phase) * 0.015;
     }
     ambientParticles.geometry.attributes.position.needsUpdate = true;
     
-    // Rotate scene slowly
-    scene.rotation.y = time * 0.02;
+    // Subtle scene rotation
+    scene.rotation.y = time * 0.015;
     
-    // Update selection ring
-    updateSelectionRing();
+    // Update selection visuals
+    updateSelectionVisuals(time);
     
     controls.update();
     composer.render();
 }
 
-// ===== RESIZE HANDLER =====
+// ===== RESIZE =====
 window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -598,6 +778,7 @@ window.addEventListener('resize', () => {
 
 // ===== START =====
 animate();
-console.log('🍄 Mycelial Mind Phase 2 initialized');
-console.log(`Nodes: ${CONFIG.nodeCount}, Connections: ${connections.length}, Spores: ${sporeCount}`);
-console.log('Click on nodes to explore the network...');
+console.log('🍄 Mycelial Mind v3 - GOING WILD!');
+console.log(`Season: ${timeSystem.season} | Time: ${timeSystem.cycle}`);
+console.log(`Nodes: ${CONFIG.nodeCount}, Connections: ${connections.length}`);
+console.log('Features: Seasonal colors, fireflies, smooth camera, search');
