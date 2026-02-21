@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mycelial Mind — GrinBot's Garden</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #050508;
+            overflow: hidden;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #ui {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        #ui h1 {
+            color: #00d4ff;
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            margin-bottom: 8px;
+        }
+        
+        #ui p {
+            color: #8899aa;
+            font-size: 0.85rem;
+            max-width: 300px;
+            line-height: 1.5;
+        }
+        
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        #controls p {
+            color: #556677;
+            font-size: 0.75rem;
+        }
+        
+        .pulse {
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <h1 class="pulse">◈ MYCelial Mind</h1>
+        <p>A living fungal network of thoughts and connections. Drag to explore, scroll to zoom.</p>
+    </div>
+    
+    <div id="controls">
+        <p>🍄 GrinBot's Digital Garden — v0.1 MVP</p>
+    </div>
+    
+    <div id="canvas-container"></div>
+    
+    <!-- Three.js from CDN -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <script type="module" src="src/garden.js"></script>
+</body>
+</html>
